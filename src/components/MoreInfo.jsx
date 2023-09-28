@@ -1,71 +1,137 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from "react";
+import SearchContext from "./SearchContext";
+import Spinner from "./Spinner";
 
-const MoreInfo = ({ country }) => {
+const MoreInfo = ({ yes, names, yesClick }) => {
+  const [countries, indexVal, checkIndex] = useContext(SearchContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageLoaded(true);
+  };
+  useEffect(() => {
+    setIsLoading(false);
+  }, [indexVal]);
   return (
-    <div>
-      <button
-        className="btn btn-primary"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasExample"
-              aria-controls="offcanvasExample"
-              
-      >
-        See more
-      </button>
-
-      <div
-        className="offcanvas offcanvas-start"
-        tabIndex="-1"
-        id="offcanvasExample"
-        aria-labelledby="offcanvasExampleLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="offcanvasExampleLabel">
-            Offcanvas
-          </h5>
+    <>
+      {isLoading === true ? (
+        <>
+          <button className="btn btn-primary" type="button" disabled>
+            <span
+              className="spinner-border spinner-border-sm"
+              aria-hidden="true"
+            ></span>
+            <span role="status">Loading...</span>
+          </button>
+        </>
+      ) : (
+        <>
           <button
+            className="btn btn-primary btn-sm"
             type="button"
-            className="btn-close"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div className="offcanvas-body">
-          <div>
-            <h1> {country?.name.official} </h1>
-            {setTimeout(() => console.log(country?.name.official), 2000)}
-          </div>
-          <div className="dropdown mt-3">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-            >
-              Dropdown button
-            </button>
-            <ul className="dropdown-menu">
-              <li>
-                <a className="dropdown-item" href="#">
-                  Action
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Another action
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Something else here
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample"
+            onClick={yesClick}
+          >
+            See More
+          </button>
 
-export default MoreInfo
+          <div>
+            <div
+              className="offcanvas offcanvas-start"
+              tabIndex="-1"
+              id="offcanvasExample"
+              aria-labelledby="offcanvasExampleLabel"
+            >
+              <div className="offcanvas-header border m-2 rounded border-3 border-opacity-50 border-info bg-info bg-opacity-25">
+                <h5
+                  className="offcanvas-title border text-dark"
+                  id="offcanvasExampleLabel"
+                >
+                  {indexVal !== null && countries[indexVal].name.official}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="offcanvas"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="offcanvas-body">
+                <div>
+                  <div>
+                    {indexVal !== null ? (
+                      <>
+                        <div className="container">
+                          {indexVal !== checkIndex && <Spinner />}
+                          {!isLoading && indexVal === checkIndex ? (
+                            <img
+                              className="img-fluid"
+                              src={
+                                indexVal === checkIndex
+                                  ? countries[indexVal].coatOfArms.svg
+                                  : ""
+                              }
+                              alt={`coatOfArms-of${countries[indexVal].name.official}`}
+                              onLoad={handleImageLoad}
+                            />
+                          ) : (
+                            <Spinner />
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-dark fw-semibold">
+                            Official Name:
+                          </span>
+                          {countries[indexVal].name.official}
+                        </div>
+                        <div>{countries[indexVal].name.common}</div>
+                        {countries[indexVal].hasOwnProperty("borders") &&
+                        countries[indexVal].borders.length > 0 ? (
+                          <>
+                            <div class="btn-group">
+                              <button
+                                class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                Borders
+                              </button>
+                              <ul class="dropdown-menu bg-secondary bg-opacity-25">
+                                {countries[indexVal].borders.map((val) => (
+                                  <li class="dropdown-item border-bottom border-1 border-white">
+                                    {val}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </>
+                        ) : (
+                          <ul className="list-group">
+                            <li className="list-group-item">
+                              {" "}
+                              It has no borders countries
+                            </li>
+                          </ul>
+                        )}
+                      </>
+                    ) : (
+                      <Spinner />
+                    )}
+                    {console.log(countries[indexVal])}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
+export default MoreInfo;

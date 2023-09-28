@@ -1,14 +1,16 @@
-import React from "react";
-import image from "./images/image1.JPG";
+import React, { useContext, useEffect, useState } from "react";
+// import image from "./images/image1.JPG";
 import MoreInfo from "./MoreInfo";
 import Spinner from "./Spinner";
+import SearchContext from "./SearchContext";
 
-const Card = ({ country,click }) => {
-  const { thisCountry } = country;
+const Card = ({ country, click, clicked }) => {
+  let result = useContext(SearchContext);
+
+  const { names } = country;
+
   return (
     <div className="card" style={{ width: "15rem" }}>
-      {/* <div className="card-header">{}</div> */}
-
       <img
         src={country.flags.svg}
         alt=""
@@ -22,9 +24,25 @@ const Card = ({ country,click }) => {
         </div>
         <p className="card-text">Population: {country.population}</p>
         <p className="card-text">Area: {country.area} sq km</p>
-              {/*  */}
-              <button className="btn btn-secondary"  onClick={click}>Get ID</button>
-        {country !== undefined ? <MoreInfo country={country} /> : <Spinner />}
+        {/*  */}
+       
+
+        {country !== undefined ? (
+          <>
+            {/* <button
+              className="btn btn-primary"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasExample"
+              aria-controls="offcanvasExample"
+            >
+              See more
+            </button> */}
+            <MoreInfo yes={country} yesClick={click} names={names} />
+          </>
+        ) : (
+          <Spinner />
+        )}
       </div>
     </div>
   );
