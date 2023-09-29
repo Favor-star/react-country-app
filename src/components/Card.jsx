@@ -5,7 +5,7 @@ import Spinner from "./Spinner";
 import SearchContext from "./SearchContext";
 
 const Card = ({ country, click, clicked }) => {
-  let result = useContext(SearchContext);
+  let [checkIndex] = useContext(SearchContext);
 
   const { names } = country;
 
@@ -38,7 +38,7 @@ const Card = ({ country, click, clicked }) => {
             >
               See more
             </button> */}
-            <MoreInfo yes={country} yesClick={click} names={names} />
+            <MoreInfo key={checkIndex} yes={country} yesClick={click} names={names} />
           </>
         ) : (
           <Spinner />
